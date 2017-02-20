@@ -1,7 +1,9 @@
+#include <stdlib.h>
 #include <omp.h>
 #include <stdio.h>
 #include <iostream>
 #include <ctime>
+#include <cfloat>
 
 using namespace std;
 
@@ -22,8 +24,8 @@ int main()
 	double *arr2 = new double[countOfElement];
 	for (int i = 0; i < countOfElement; i++)
 	{
-		arr2[i] = rand() ;
-		 //cout << arr[i] << " ";
+		arr2[i] = rand();
+		//cout << arr[i] << " ";
 	}
 	cout << endl;
 
@@ -34,17 +36,22 @@ int main()
 #pragma omp parallel shared(arr, arr2, sum)
 	{
 		double pSum = 0;
-#pragma omp  for // schedule(dynamic, 10000)
+#pragma omp  for schedule(dynamic, 10000)
 		for (int i = 0; i < countOfElement; i++)
 			pSum += arr[i] * arr2[i];
 #pragma omp critical
 		sum += pSum;
 	}
+	endTime = clock();
+	cout << sum << endl;
+	cout << "parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
 
-	//for (int i = 0; i < countOfElement; i++)
-	//	sum += arr[i] * arr2[i];
+	startTime = clock();
+	sum = 0;
+	for (int i = 0; i < countOfElement; i++)
+		sum += arr[i] * arr2[i];
 
 	endTime = clock();
 	cout << sum << endl;
-	cout << "time : " << endTime - startTime << endl;
+	cout << "no parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
 }
