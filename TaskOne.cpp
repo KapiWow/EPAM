@@ -1,7 +1,9 @@
+#include <stdlib.h>
 #include <omp.h>
 #include <stdio.h>
 #include <iostream>
 #include <ctime>
+#include <cfloat>
 
 using namespace std;
 
@@ -14,16 +16,16 @@ int main()
 	double *arr = new double[countOfElement];
 	srand(time(NULL));
 	for (int i = 0; i < countOfElement; i++)
-		arr[i] = DBL_MAX*(rand() / 32767.0);
+		arr[i] = DBL_MAX * rand()/ 32767.0;
 
 	int startTime, endTime;
 	startTime = clock();
-	double max = -DBL_MAX;
+	double max = arr[0];
 
 #pragma omp parallel shared(arr,max) 
 	{
-		double pMax = -DBL_MAX;
-#pragma omp  for schedule(dynamic, 10000)
+		double pMax = arr[0];
+#pragma omp  for 
 		for (int i = 0; i < countOfElement; i++)
 		{
 			if (arr[i] > pMax)
@@ -42,5 +44,5 @@ int main()
 
 	endTime = clock();
 	cout << max << endl;
-	cout << "time : " << endTime - startTime << endl;
+	cout << "time : " << (endTime - startTime)/10000 << endl;
 }
