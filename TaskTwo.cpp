@@ -17,38 +17,34 @@ int main()
 	srand(clock());
 	for (int i = 0; i < countOfElement; i++)
 		arr[i] = rand();
-	cout << endl;
 	double *arr2 = new double[countOfElement];
 	for (int i = 0; i < countOfElement; i++)
 		arr2[i] = rand();
-	cout << endl;
 
-	int startTime, endTime;
-	startTime = clock();
+	double startTime, endTime;
+	startTime = omp_get_wtime();
 	double sum = 0;
-
-<<<<<<< HEAD
-#pragma omp parallel for
-=======
-#pragma omp parallel shared(arr, arr2, sum)
+	int i = 0;
+#pragma omp parallel shared(arr, arr2, sum) private(i)
 	{
 		double pSum = 0;
-#pragma omp  for 
->>>>>>> 33e68bb4f572cac22f79ea94d2c9cbfa76768855
-		for (int i = 0; i < countOfElement; i++)
-			sum += arr[i] * arr2[i];
-
-	endTime = clock();
+#pragma omp for 
+		for (i = 0; i < countOfElement; i++)
+			pSum += arr[i] * arr2[i];
+#pragma op critical
+		sum += pSum;
+	}
+	endTime = omp_get_wtime();
 	cout << sum << endl;
-	cout << "parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
+	cout << "parallel time : " << (double)(endTime - startTime) << endl;
 
-	startTime = clock();
+	startTime = omp_get_wtime();
 	sum = 0;
 
 	for (int i = 0; i < countOfElement; i++)
 		sum += arr[i] * arr2[i];
 
-	endTime = clock();
+	endTime = omp_get_wtime();
 	cout << sum << endl;
-	cout << "no parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
+	cout << "no parallel time : " << (double)(endTime - startTime) << endl;
 }

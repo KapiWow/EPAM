@@ -18,42 +18,29 @@ int main()
 	for (int i = 0; i < countOfElement; i++)
 		arr[i] = rand();
 
-	int startTime, endTime;
-	startTime = clock();
+	double startTime, endTime;
+	startTime = omp_get_wtime();
 	double max = -DBL_MAX;
 
 #pragma omp parallel for
-<<<<<<< HEAD
-		for (int i = 0; i < countOfElement; i++)
-		{
-			if (arr[i] > max)
-				max = arr[i];
-		}
-=======
 	for (int i = 0; i < countOfElement; i++)
-	{
 		if (arr[i] > max)
 #pragma omp critical
 			if (arr[i] > max)
 				max = arr[i];
-	}
->>>>>>> 33e68bb4f572cac22f79ea94d2c9cbfa76768855
 
-	endTime = clock();
+	endTime = omp_get_wtime();
 	cout << max << endl;
-	cout << "parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
+	cout << "parallel time : " << (double)(endTime - startTime) << endl;
 
-	startTime = clock();
+	startTime = omp_get_wtime();
 	max = -DBL_MAX;
 
 	for (int i = 0; i < countOfElement; i++)
-	{
 		if (arr[i] > max)
 			max = arr[i];
-	}
 
-
-	endTime = clock();
+	endTime = omp_get_wtime();
 	cout << max << endl;
-	cout << "no parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
+	cout << "no parallel time : " << (double)(endTime - startTime) << endl;
 }

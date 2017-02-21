@@ -19,11 +19,11 @@ int main()
 	cout << "count of steps" << endl;
 	cin >> countOfElement;
 
-	int startTime, endTime;
-	startTime = clock();
+	double startTime, endTime;
 	double sum = 0;
 	double a = 0, b = 1;
 
+	startTime = omp_get_wtime();
 #pragma omp parallel shared(sum)
 	{
 		double pSum = 0;
@@ -34,18 +34,18 @@ int main()
 		sum += pSum;
 	}
 
-	endTime = clock();
+	endTime = omp_get_wtime();
 	cout << sum << endl;
-	cout << "parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
+	cout << "parallel time : " << (double)(endTime - startTime) << endl;
 
-	startTime = clock();
+	startTime = omp_get_wtime();
 
 	sum = 0;
 
 	for (int i = 0; i < countOfElement; i++)
 		sum += (double)1 / countOfElement*f(a + (b - a) * 1 / countOfElement*i);
 
-	endTime = clock();
+	endTime = omp_get_wtime();
 	cout << sum << endl;
-	cout << "no parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
+	cout << "no parallel time : " << (double)(endTime - startTime) << endl;
 }
