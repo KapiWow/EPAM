@@ -33,21 +33,17 @@ int main()
 	startTime = clock();
 	double sum = 0;
 
-#pragma omp parallel shared(arr, arr2, sum)
-	{
-		double pSum = 0;
-#pragma omp  for schedule(dynamic, 10000)
+#pragma omp parallel for
 		for (int i = 0; i < countOfElement; i++)
-			pSum += arr[i] * arr2[i];
-#pragma omp critical
-		sum += pSum;
-	}
+			sum += arr[i] * arr2[i];
+
 	endTime = clock();
 	cout << sum << endl;
 	cout << "parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
 
 	startTime = clock();
 	sum = 0;
+
 	for (int i = 0; i < countOfElement; i++)
 		sum += arr[i] * arr2[i];
 
