@@ -25,7 +25,7 @@ int main()
 #pragma omp parallel shared(arr,max) 
 	{
 		double pMax = -DBL_MAX;
-#pragma omp  for schedule(dynamic, 10000)
+#pragma omp  for
 		for (int i = 0; i < countOfElement; i++)
 		{
 			if (arr[i] > pMax)
@@ -38,6 +38,8 @@ int main()
 	endTime = clock();
 	cout << max << endl;
 	cout << "parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
+	
+	startTime = clock();
 	max = -DBL_MAX;
 
 	for (int i = 0; i < countOfElement; i++)
