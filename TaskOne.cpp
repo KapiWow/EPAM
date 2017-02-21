@@ -22,23 +22,19 @@ int main()
 	startTime = clock();
 	double max = -DBL_MAX;
 
-#pragma omp parallel shared(arr,max) 
+#pragma omp parallel for
+	for (int i = 0; i < countOfElement; i++)
 	{
-		double pMax = -DBL_MAX;
-#pragma omp  for
-		for (int i = 0; i < countOfElement; i++)
-		{
-			if (arr[i] > pMax)
-				pMax = arr[i];
-		}
+		if (arr[i] > max)
 #pragma omp critical
-		if (pMax > max)
-			max = pMax;
+			if (arr[i] > max)
+				max = arr[i];
 	}
+
 	endTime = clock();
 	cout << max << endl;
 	cout << "parallel time : " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
-	
+
 	startTime = clock();
 	max = -DBL_MAX;
 

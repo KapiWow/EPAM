@@ -16,17 +16,11 @@ int main()
 	double *arr = new double[countOfElement];
 	srand(clock());
 	for (int i = 0; i < countOfElement; i++)
-	{
 		arr[i] = rand();
-		//cout << arr[i] << " ";
-	}
 	cout << endl;
 	double *arr2 = new double[countOfElement];
 	for (int i = 0; i < countOfElement; i++)
-	{
 		arr2[i] = rand();
-		//cout << arr[i] << " ";
-	}
 	cout << endl;
 
 	int startTime, endTime;
@@ -36,7 +30,7 @@ int main()
 #pragma omp parallel shared(arr, arr2, sum)
 	{
 		double pSum = 0;
-#pragma omp  for schedule(dynamic, 10000)
+#pragma omp  for 
 		for (int i = 0; i < countOfElement; i++)
 			pSum += arr[i] * arr2[i];
 #pragma omp critical
