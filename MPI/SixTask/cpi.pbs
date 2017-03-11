@@ -1,0 +1,7 @@
+#!/bin/sh
+#PBS -q @m12 -l nodes=4:ppn=8
+
+cd $HOME/MPI/SixTask
+mpirun -machinefile $PBS_NODEFILE ./cpi
+#mpirun -machinefile machines cpi
+
