@@ -15,6 +15,7 @@ main(int argc, char *argv[])
 	int ProcRank, ProcNum, N = 1000000, i = 0, j = 0;
 	double max, maxMain;
 	MPI_Status Status;
+	MPI_Request Request;
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
     MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
@@ -82,6 +83,47 @@ main(int argc, char *argv[])
 		endwtime = MPI_Wtime();
 		printf("\nsendRecv = %f\n", endwtime - startwtime);
 	}
+	
+	startwtime = MPI_Wtime();
+
+    z = (double*)malloc(k * sizeof(double*));
+
+    if (ProcRank == 0)
+    {
+        for (i = 1; i < ProcNum; i++)
+            MPI_Isend(x[i], k, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &Request);
+        max = x[0][0];
+        for (i = 0; i < last; i++)
+            if (x[0][i] > max)
+                max = x[0][i];
+    } else
+    {
+        MPI_Recv(z, k, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &Status);
+        for (i = 0; i < k; i++)
+            if (z[i] > max)
+                max = z[i];
+    }
+
+    if ( ProcRank == 0)
+        {
+            maxMain = max;
+            for (i = 1; i < ProcNum; i++)
+            {
+                MPI_Recv(&max, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &Status);
+                if (max > maxMain)
+                    maxMain = max;
+            }
+        } else
+            MPI_Send(&max, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+
+
+    if (ProcRank == 0)
+    {
+        printf("\nmax = %f", maxMain);
+        endwtime = MPI_Wtime();
+        printf("\nIsendRecv = %f\n", endwtime - startwtime);
+    }
+
 
 	if (ProcRank == 0)
 	{	
