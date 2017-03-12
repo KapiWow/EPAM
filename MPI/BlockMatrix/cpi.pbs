@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -q @m12 -l nodes=4:ppn=8
+#PBS -q @m12 -l nodes=8:ppn=8
 
 cd $HOME/EPAM/MPI/BlockMatrix
 mpirun -machinefile $PBS_NODEFILE ./cpi
