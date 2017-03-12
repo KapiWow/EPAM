@@ -12,7 +12,7 @@ main(int argc, char *argv[])
 	double * y = (double*) malloc(sizeof(double) * 1000000);
 	double TotalSum, ProcSum = 0.0;
 	double startwtime = 0.0, endwtime;
-	int ProcRank, ProcNum, N = 500, i = 0, j = 0, k = 0;
+	int ProcRank, ProcNum, N = 1000, i = 0, j = 0, k = 0;
 	double max, maxMain;
 	double ** z, ** x, ** a, **line, **colomn, **rez;
 	MPI_Status Status;
@@ -21,17 +21,20 @@ main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
     MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
 	
-	int count = (N/ProcNum);
+	int count = (N/(ProcNum));
+	if (N != ProcNum * count)
+		count++;
+	int newN = count * ProcNum;
 	if (ProcRank == 0)
 	{
-		x = (double**)malloc(N * sizeof(double*));
-		z = (double**)malloc(N * sizeof(double*));
-		a = (double**)malloc(N * sizeof(double*));
-		for (i = 0; i < N; i++)
+		x = (double**)malloc(newN * sizeof(double*));
+		z = (double**)malloc(newN * sizeof(double*));
+		a = (double**)malloc(newN * sizeof(double*));
+		for (i = 0; i < newN; i++)
 		{
-			x[i] = (double*)malloc(N * sizeof(double));
-			z[i] = (double*)malloc(N * sizeof(double));
-			a[i] = (double*)malloc(N * sizeof(double));
+			x[i] = (double*)malloc(newN * sizeof(double));
+			z[i] = (double*)malloc(newN * sizeof(double));
+			a[i] = (double*)malloc(newN * sizeof(double));
 			for (j = 0; j < N; j++)
 			{
 				 x[i][j] = (double)rand()/INT_MAX;
@@ -45,9 +48,9 @@ main(int argc, char *argv[])
 	rez = (double**)malloc(count * sizeof(double*));
 	for (i = 0; i < count; i++)
 	{
-		rez[i] = (double*)malloc(N * sizeof(double));
-		line[i] = (double*)malloc(N * sizeof(double));
-		colomn[i] = (double*)malloc(N * sizeof(double));
+		rez[i] = (double*)malloc(newN * sizeof(double));
+		line[i] = (double*)malloc(newN * sizeof(double));
+		colomn[i] = (double*)malloc(newN * sizeof(double));
 	}
 	
 	if (ProcRank == 0)
@@ -102,25 +105,9 @@ main(int argc, char *argv[])
 	}
 
 	if (ProcRank == 0)
-    {
-     //   startwtime = MPI_Wtime();
-        for (i = N - ProcNum * count; i < N; i++)
-        {
-            for (j = 0; j < N; j++)
-            {
-                double sum = 0;
-                for (k = 0; k < N; k++)
-                    sum += x[i][k] * z[j][k];
-                a[i][j] = sum;
-            }
-        }
-    }
-
-	
-	if (ProcRank == 0)
 	{
 		endwtime = MPI_Wtime();
-		printf("\nparallel = %f\n", endwtime - startwtime);
+		printf("parallel = %f\n", endwtime - startwtime);
 	}
 	
 	if (ProcRank == 0)
@@ -141,7 +128,7 @@ main(int argc, char *argv[])
 	if (ProcRank == 0)
 	{
 		endwtime = MPI_Wtime();
-		printf("\nno parallel = %f\n", endwtime - startwtime);
+		printf("no parallel = %f\n", endwtime - startwtime);
 	}
 	
 	MPI_Finalize();
