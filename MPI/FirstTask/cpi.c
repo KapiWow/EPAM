@@ -22,7 +22,6 @@ main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
     MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
     
-	printf("\nProcNum = %f", ProcNum);
 	int k = N/ProcNum;
 	int i1 = k * ProcRank;
 	int i2 = k * ( ProcRank + 1);
@@ -67,31 +66,6 @@ main(int argc, char *argv[])
 		printf("\nmax = %10.2f", maxMain);
 		endwtime = MPI_Wtime();
 		printf("\nreduce time = %f", endwtime - startwtime);
-	}
-	startwtime = MPI_Wtime();
-	max = x[0], maxMain = x[0];
-	if (ProcRank == ProcNum-1) 
-		i2 = N;
-	for (i = i1; i < i2; i++)
-		if (x[i] > max)
-			max = x[i];
-	if ( ProcRank == 0)
-	{
-		maxMain = max;
-		for (i = 1; i < ProcNum; i++)
-		{
-			MPI_Recv(&max, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &Status);
-			if (max > maxMain)
-				maxMain = max;
-		}
-	} else
-		MPI_Send(&max, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
-
-	if (ProcRank == 0)
-	{
-		printf("\nmax = %10.2f", maxMain);
-		endwtime = MPI_Wtime();
-		printf("\nSend time = %f", endwtime - startwtime);
 	}
 
 	startwtime = MPI_Wtime();
