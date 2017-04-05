@@ -1,9 +1,9 @@
-#define _XOPEN_SOURCE 600
 #include "mpi.h"
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
 #include <limits.h>
+#include <stdlib.h>
 
 int
 main(int argc, char *argv[])
@@ -12,10 +12,10 @@ main(int argc, char *argv[])
 	double * y = (double*) malloc(sizeof(double) * 1000000);
 	double TotalSum, ProcSum = 0.0;
 	double startwtime = 0.0, endwtime;
-	int ProcRank, ProcNum, N = 500, i = 0, j = 0, k = 0, l = 0;
+	int ProcRank, ProcNum, N = 125*8, i = 0, j = 0, k = 0, l = 0, m = 0, t = 0;
 	int bil = 8; //count of blocks in line
 	double max, maxMain;
-	double ** z, ** x, ** r, **a, **b, **c;
+	double **** z, **** x, **** r, **a, **b, **c;
 	MPI_Status Status;
 	MPI_Request Request;
     MPI_Init(&argc, &argv);
@@ -49,18 +49,31 @@ main(int argc, char *argv[])
 	int newN = count * bil;
 	if (ProcRank == 0)
 	{
-		x = (double**)malloc(newN * sizeof(double*));
-		z = (double**)malloc(newN * sizeof(double*));
-		r = (double**)malloc(newN * sizeof(double*));
-		for (i = 0; i < newN; i++)
+		x = (double****)malloc(bil * sizeof(double***));
+		z = (double****)malloc(bil * sizeof(double***));
+		r = (double****)malloc(bil * sizeof(double***));
+		for (i = 0; i < bil; i++)
 		{
-			x[i] = (double*)malloc(newN * sizeof(double));
-			z[i] = (double*)malloc(newN * sizeof(double));
-			r[i] = (double*)malloc(newN * sizeof(double));
-			for (j = 0; j < N; j++)
+			x[i] = (double***)malloc(bil * sizeof(double**));
+			z[i] = (double***)malloc(bil * sizeof(double**));
+			r[i] = (double***)malloc(bil * sizeof(double**));
+			for (j = 0; j < bil; j++)
 			{
-				 x[i][j] = (double)rand()/INT_MAX;
-				 z[i][j] = (double)rand()/INT_MAX;
+				x[i][j] = (double**)malloc(count * sizeof(double*));
+				z[i][j] = (double**)malloc(count * sizeof(double*));
+				r[i][j] = (double**)malloc(count * sizeof(double*));
+				for (k = 0; k < count; k++)
+				{
+					x[i][j][k] = (double*)malloc(count * sizeof(double));
+					z[i][j][k] = (double*)malloc(count * sizeof(double));
+					r[i][j][k] = (double*)malloc(count * sizeof(double));
+					for (l = 0; l < count; l++)
+					{
+						x[i][j][k][l] = (double)rand()/INT_MAX;
+						z[i][j][k][l] = (double)rand()/INT_MAX;
+						r[i][j][k][l] = 0;
+					}
+				}
 			}
 		}
 	} 
@@ -74,28 +87,27 @@ main(int argc, char *argv[])
 		b[i] = (double*)malloc(count * sizeof(double));
 		c[i] = (double*)malloc(count * sizeof(double));
 	}
-	
-//	if (ProcRank == 0)
-//	{
-//		startwtime = MPI_Wtime();
-//		for (i = 0; i < bil; i++)
-//			for (j = 0; j < bil; j++)
-//				for (k = 0; k < bil; k++)
-//				{	
-//					if ((i == 0) && (j == 0))	
-//					{
-//						MPI_Isend(x[i * count + j], N, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &Request);
-//						MPI_Isend(z[i * count + j], N, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &Request);
-//					}
-//				}					
-//	} else
-//	{
-//		for (i = 0; i < count; i++)
-//		{
-//			MPI_Recv(line[i], N, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &Status);
-//			MPI_Recv(colomn[i], N, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &Status);
-//		}	
-//	}
+	if (ProcRank == 0)
+	{
+		printf("123\n");
+		startwtime = MPI_Wtime();
+		for (i = 0; i < bil; i++)
+			for (j = 0; j < bil; j++)
+				if ((i == 0) && (j == 0))	
+				{	
+					for (l = 0; l < count; l++)
+					MPI_Isend(x[i][j][l], count, MPI_DOUBLE, i * bil + j, 0, MPI_COMM_WORLD, &Request);
+					MPI_Isend(z[i][j][l], count, MPI_DOUBLE, i * bil + j, 0, MPI_COMM_WORLD, &Request);
+				}
+	} else
+	{
+		for (i = 0; i < count; i++)
+		{
+			MPI_Recv(a[i], count, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &Status);
+			MPI_Recv(b[i], count, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &Status);
+		}	
+	}
+	printf("123\n");
 	
 //	int num = 0;
 //	while (num < ProcNum)
@@ -139,16 +151,17 @@ main(int argc, char *argv[])
 	if (ProcRank == 0)
 	{
 		startwtime = MPI_Wtime();
-		for (i = 0; i < N; i++)
-		{
-			for (j = 0; j < N; j++)
-			{
-				double sum = 0;
-				for (k = 0; k < N; k++)
-					sum += x[i][k] * z[j][k];
-				r[i][j] = sum;
-			}	
-		}
+		for (i = 0; i < bil; i++)
+			for (j = 0; j < bil; j++)
+				for (k = 0; k < bil; k++)
+					for (l = 0; l < count; l++)
+						for (m = 0; m < count; m++)
+						{
+							double sum = 0;
+							for (t = 0; t < count; t++)
+								sum += x[i][k][l][t] * z[k][j][m][t];
+							r[i][j][l][m] += sum;
+						}
 	}
 
 	if (ProcRank == 0)

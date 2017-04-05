@@ -1,9 +1,9 @@
-#define _XOPEN_SOURCE 600
 #include "mpi.h"
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
 #include <limits.h>
+#include <stdlib.h>
 
 int
 main(int argc, char *argv[])

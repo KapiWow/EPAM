@@ -1,0 +1,15 @@
+[m10:25805] *** Process received signal ***
+[m10:25805] Signal: Segmentation fault (11)
+[m10:25805] Signal code: Address not mapped (1)
+[m10:25805] Failing at address: 0x7d1
+[m10:25805] [ 0] /lib64/libpthread.so.0(+0xf130)[0x7ff027840130]
+[m10:25805] [ 1] /lib64/libc.so.6(+0x13ffc0)[0x7ff0275affc0]
+[m10:25805] [ 2] /usr/lib64/openmpi/lib/libopen-pal.so.13(opal_convertor_pack+0x175)[0x7ff026f81bb5]
+[m10:25805] [ 3] /usr/lib64/openmpi/lib/openmpi/mca_btl_self.so(mca_btl_self_prepare_src+0xbd)[0x7ff0213b192d]
+[m10:25805] [ 4] /usr/lib64/openmpi/lib/openmpi/mca_pml_ob1.so(mca_pml_ob1_send_request_start_prepare+0x4c)[0x7ff020d1501c]
+[m10:25805] [ 5] /usr/lib64/openmpi/lib/openmpi/mca_pml_ob1.so(mca_pml_ob1_isend+0x4cd)[0x7ff020d09ecd]
+[m10:25805] [ 6] /usr/lib64/openmpi/lib/libmpi.so.12(MPI_Isend+0x22c)[0x7ff027ab6b1c]
+[m10:25805] [ 7] ./cpi[0x4013e5]
+[m10:25805] [ 8] /lib64/libc.so.6(__libc_start_main+0xf5)[0x7ff027491af5]
+[m10:25805] [ 9] ./cpi[0x400b39]
+[m10:25805] *** End of error message ***

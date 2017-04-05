@@ -4,6 +4,7 @@
 #include <math.h>
 #include <time.h>
 #include <limits.h>
+#include <stdlib.h>
 
 int
 main(int argc, char *argv[])

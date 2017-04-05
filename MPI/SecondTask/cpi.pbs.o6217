@@ -1,0 +1,9 @@
+
+sum = 2499447.71043
+parallel send time = 0.027633
+sum = 2498952.38725
+parallel ssend time = 0.020311
+sum = 2499200.04884
+reduce time = 0.006742
+sum = 2499200.04884
+wall clock time = 0.072460
