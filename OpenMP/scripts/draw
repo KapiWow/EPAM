@@ -1,0 +1,4 @@
+#!/bin/bash
+
+gnuplot plot.gnuplot
+eog xyz.png
