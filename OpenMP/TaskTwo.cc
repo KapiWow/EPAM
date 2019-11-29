@@ -18,21 +18,7 @@ int main(int argc, char** argv)
 	int countOfElement;
 	ss << argv[1];
 	ss >> countOfElement;
-	//std::clog << countOfElement << std::endl;
-	//bool seq;
-	//ss << argv[2];
-	//ss >> seq;
 	int threads_count = 8;
-	//ss << argv[2];
-	//ss >> threads_count;
-
-	//if (threads_count == 1)
-	//	seq = true;
-
-	//double *arr = new double[countOfElement];
-	//srand(time(NULL));
-	//for (int i = 0; i < countOfElement; i++)
-	//	arr[i] = rand();
 	
 	std::mt19937 mt_rand(time(0));
 
@@ -80,16 +66,4 @@ int main(int argc, char** argv)
 		fout << time << std::endl;
 	}
 
-	//_t0 = high_resolution_clock::now();
-	////======================================
-	////======================================
-	//_t1 = high_resolution_clock::now();
-	//dt = duration_cast<microseconds>(_t1 - _t0);
-	//seq_time = dt.count();
-
-	//std::cout << max_val << std::endl;
-
-	//std::clog << "parallel time: " << parallel_time << std::endl;
-	//std::clog << "sequence time: " << seq_time << std::endl;
-	//fout << seq_time << std::endl;
 }
